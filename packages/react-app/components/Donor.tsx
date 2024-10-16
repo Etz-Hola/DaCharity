@@ -10,7 +10,7 @@ import { makeDonation } from '@/services/blockchain'
 const Donor: React.FC<{ charity: CharityStruct }> = ({ charity }) => {
   const { donorsModal } = useSelector((states: RootState) => states.globalStates)
   const dispatch = useDispatch()
-  const { setDonorModal } = globalActions
+  const { setDonorModal } = globalActions 
 
   const { address } = useAccount()
   const [donor, setDonor] = useState<DonorParams>({
@@ -33,7 +33,7 @@ const Donor: React.FC<{ charity: CharityStruct }> = ({ charity }) => {
           .then((tx) => {
             dispatch(setDonorModal('scale-0'))
             resetForm()
-            console.log(tx)
+            console.log(tx) 
             resolve(tx)
           })
           .catch((error) => reject(error))
@@ -50,7 +50,7 @@ const Donor: React.FC<{ charity: CharityStruct }> = ({ charity }) => {
     const { name, value } = e.target
     setDonor((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value, 
     }))
   }
 
