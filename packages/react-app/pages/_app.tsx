@@ -1,53 +1,47 @@
-import {
-  RainbowKitProvider,
-  connectorsForWallets,
-} from '@rainbow-me/rainbowkit';
-import '@rainbow-me/rainbowkit/styles.css';
-import { injectedWallet } from '@rainbow-me/rainbowkit/wallets';
-import type { AppProps } from 'next/app';
-import { WagmiProvider, createConfig, http } from 'wagmi';
-import { celo, celoAlfajores } from 'wagmi/chains';
-import Layout from '../components/Layout';
-import '../styles/globals.css';
+import { ToastContainer } from 'react-toastify'
+import '@/styles/global.css'
+import 'react-toastify/dist/ReactToastify.css'
+import '@rainbow-me/rainbowkit/styles.css'
+import { useEffect, useState } from 'react'
+import { Providers } from '@/services/provider'
+import type { AppProps } from 'next/app'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { Provider } from 'react-redux'
+import { store } from '@/store'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+export default function App({ Component, pageProps }: AppProps) {
+  const [showChild, setShowChild] = useState<boolean>(false)
 
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: 'Recommended',
-      wallets: [injectedWallet],
-    },
-  ],
-  {
-    appName: 'Celo Composer',
-    projectId: process.env.WC_PROJECT_ID ?? '044601f65212332475a09bc14ceb3c34',
-  }
-);
+  useEffect(() => {
+    setShowChild(true)
+  }, [])
 
-const config = createConfig({
-  connectors,
-  chains: [celo, celoAlfajores],
-  transports: {
-    [celo.id]: http(),
-    [celoAlfajores.id]: http(),
-  },
-});
-
-const queryClient = new QueryClient();
-
-function App({ Component, pageProps }: AppProps) {
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <Layout>
+  if (!showChild || typeof window === 'undefined') {
+    return null
+  } else {
+    return (
+      <Providers pageProps={pageProps}>
+        <Provider store={store}>
+          <div className="min-h-screen relative">
+            <Header />
             <Component {...pageProps} />
-          </Layout>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  );
+            <Footer />
+            <ToastContainer
+              position="bottom-center"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
+          </div>
+        </Provider>
+      </Providers>
+    )
+  }
 }
-
-export default App;
